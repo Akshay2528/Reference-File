@@ -1,0 +1,47 @@
+vi /etc/ppp/peers/mobile-noauth
+*************************************************************
+file /etc/ppp/options-mobile
+connect "/usr/sbin/chat -v -t15 -f /etc/ppp/chatscripts/mobile-modem.chat"
+*************************************************************
+
+cd /etc/ppp/peers/
+rm provider
+ln -s mobile-noauth provider
+
+
+mkdir /etc/ppp/chatscripts
+
+vi /etc/ppp/chatscripts/mobile-modem.chat
+*************************************************************
+TIMEOUT 35
+ECHO ON
+ABORT '\nBUSY\r'
+ABORT '\nERROR\r'
+ABORT '\nNO ANSWER\r'
+ABORT '\nNO CARRIER\r'
+ABORT '\nNO DIALTONE\r'
+ABORT '\nRINGING\r\n\r\nRINGING\r'
+'' \rATZ
+OK 'ATQ0 V1 E1 S0=0 &C1 &D2 +FCLASS=0'
+OK AT+CGDCONT=3,"IP","em"
+OK ATD*99***1#
+CONNECT ''
+*************************************************************
+
+vi /etc/ppp/options-mobile
+/dev/ttyUSB3
+115200
+lock
+crtscts
+modem
+passive
+novj
+defaultroute
+noipdefault
+usepeerdns
+noauth
+hide-password
+persist
+holdoff 10
+maxfail 0
+debug
